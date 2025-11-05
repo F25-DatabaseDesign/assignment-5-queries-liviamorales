@@ -1,0 +1,245 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 1) How many containers of antibiotics are currently available?\
+\
+Query:\
+SELECT quantityOnHand \
+FROM item \
+WHERE itemDescription LIKE '%antibiotics%';\
+\
+Answer:\
+100\
+\
+2) \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Which volunteer(s), if any, have phone numbers that do not start with the number 2 and whose last name is not Jones. Query should retrieve names rather than ids.\
+\
+Query:\
+SELECT volunteerName \
+FROM volunteer \
+WHERE  volunteerTelephone NOT LIKE '2%' AND volunteerName NOT LIKE '%Jones%';\
+\
+Answer:\
+Gene Lewin\
+\
+3) Which volunteer(s) are working on transporting tasks? Query should retrieve names rather than ids.\
+\
+Query:\
+SELECT DISTINCT v.volunteerName \
+FROM volunteer v \
+JOIN assignment a \
+ON v.volunteerId = a.volunteerId\
+JOIN task t on a.taskCode = t.taskCode\
+JOIN task_type tt on t.taskTypeId = tt.taskTypeId\
+WHERE tt.taskTypeName = 'transporting';\
+\
+Answer:\
+George Brewer\
+\
+4) Which task(s) have yet to be assigned to any volunteers (provide task descriptions, not the codes?\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT t.taskDescription \
+FROM task t\
+LEFT JOIN assignment a \
+ON t.taskCode = a.taskCode\
+WHERE a.taskCode IS NULL;\
+\
+Answer:\
+Prepare 100 food packages\
+Take packages to the warehouse\
+\outl0\strokewidth0 \strokec2 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 5) Which type(s) of package contain some kind of bottle?\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT DISTINCT pt.packageTypeName \
+FROM package_type pt\
+JOIN package p \
+ON pt.packageTypeId = p.packageTypeId\
+JOIN package_contents pc \
+ON p.packageId = pc.packageId\
+JOIN item i on pc.itemId = i.itemId\
+WHERE i.itemDescription \
+LIKE '%bottle%';\
+\
+Answer:\
+\outl0\strokewidth0 \strokec2 food and water \
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 6) Which items, if any, are not in any packages? Answer should be item descriptions. \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT itemDescription\
+FROM item i\
+LEFT JOIN package_contents pc\
+ON i.itemId = pc.itemId\
+WHERE pc.itemId IS NULL;\
+\
+Answer:\
+Bottle of antibiotics\
+Bottle of aspirin\
+Flashlight\
+Pack of bandages\
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 7) Which task(s) are assigned to volunteer(s) that live in New Jersey (NJ)? Answer should have the task description and not the task ids. \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT DISTINCT t.taskDescription\
+FROM task t \
+JOIN assignment a ON t.taskCode = a.taskCode\
+JOIN volunteer v ON a.volunteerId = v.volunteerId\
+WHERE v.volunteerAddress LIKE '%NJ%';\
+\
+Answer:\
+\outl0\strokewidth0 \strokec2 Prepare 20 children\'92s packages\
+Prepare 100 water packages\
+Prepare 5,000 packages \
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 8) Which volunteers began their assignments in the first half of 2021? Answer should have the volunteer names and not their ids. \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT DISTINCT v.volunteerName\
+FROM volunteer v\
+JOIN assignment a ON v.volunteerId = a.volunteerId\
+WHERE a.startDateTime BETWEEN '2021-01-01' AND '2021-06-30';\
+\
+Answer:\
+Joan Simmons\
+Chris Jordan\
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 9) Which volunteers have been assigned to tasks that include packing spam? Answer should have the volunteer names and not their ids. \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT DISTINCT v.volunteerName\
+FROM volunteer v\
+JOIN assignment a ON v.volunteerId = a.volunteerId\
+JOIN task t ON a.taskCode = t.taskCode\
+JOIN package p on t.taskCode = p.taskCode\
+JOIN package_contents pc ON p.packageId = pc.packageId\
+JOIN item i ON pc.itemId = i.itemId\
+WHERE i.itemDescription LIKE '%spam%';\
+\
+Answer:\
+\outl0\strokewidth0 \strokec2 Julie White\
+Gerry Banks\
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 10) Which item(s) (if any) have a total value of exactly $100 in one package? Answer should be item descriptions. \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT DISTINCT i.itemDescription\
+FROM item i \
+JOIN package_contents pc ON i.itemId = pc.itemId\
+WHERE (i.itemValue * pc.itemQuantity) = 100;\
+\
+Answer:\
+Baby formula\
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 11) How many volunteers are assigned to tasks with each different status? The answer should show each different status and the number of volunteers sorted from highest to lowest) \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT ts.taskStatusName, COUNT(DISTINCT a.volunteerId)\
+FROM task_status ts\
+JOIN task t ON ts.taskStatusId = t.taskStatusId\
+JOIN assignment a ON t.taskCode = a.taskCode\
+GROUP BY ts.taskStatusName\
+ORDER BY COUNT(DISTINCT a.volunteerId) DESC;\
+\
+Answer:\
+\outl0\strokewidth0 \strokec2 Open: 4 volunteers\
+Closed: 3 volunteers\
+Ongoing: 2 volunteers\
+Pending: 1 volunteer \
+\
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 12) Which task creates the heaviest set of packages and what is the weight? Show both the taskCode and the weight (You should be able to do this without using any sub-queries). \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT t.taskCode, SUM(p.packageWeight) AS totalWeight\
+FROM task t \
+JOIN package p ON t.taskCode = p.taskCode\
+GROUP BY t.taskCode\
+ORDER BY totalWeight DESC\
+LIMIT 1;\
+\
+Answer:\
+taskCode: 106 with totalWeight: 308\
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 13) How many tasks are there that do not have a type of \'93packing\'94? \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT COUNT(*) AS numTasks\
+FROM task t\
+JOIN task_type tt on t.taskTypeId = tt.taskTypeId\
+WHERE tt.taskTypeName NOT LIKE 'packing';\
+\
+Answer:\
+3\
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 14) Of those items that have been packed, which item (or items) were touched by fewer than 3 volunteers? Answer should be item descriptions. \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT i.itemDescription \
+FROM item i \
+JOIN package_contents pc ON i.itemId = pc.itemId\
+JOIN package p ON pc.packageId = p.packageId\
+JOIN task t ON p.taskCode = t.taskCode\
+JOIN assignment a ON t.taskCode = a.taskCode\
+GROUP BY i.itemDescription\
+HAVING COUNT(DISTINCT a.volunteerId) < 3;\
+\
+Answer:\
+Can of spam\
+Dried fruit\
+Men\'92s coat\
+Sleeping bag\
+Tent\
+Women\'92s coat\
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf0 \strokec2 15) Which packages have a total value of more than 100? Show the packageIds and their value sorted from lowest to highest.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \outl0\strokewidth0 Query:\
+SELECT pc.packageId,\
+SUM(i.itemValue * pc.itemQuantity) AS totalValue\
+FROM package_contents pc\
+JOIN item i ON pc.itemId = i.itemId\
+GROUP BY pc.packageId\
+HAVING totalValue > 100\
+ORDER BY totalValue ASC;\
+\
+Answer:\
+packageId: 6, totalValue: 150\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 packageId: 2, totalValue: 151\
+packageId: 4, totalValue: 350\
+packageId: 10, totalValue: 750\
+packageId: 5, totalValue: 1420\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+\
+\
+}
